@@ -1,0 +1,32 @@
+\begin{algorithm}
+\caption{Multi-Modal Vision-Language Processing}
+\label{alg:multimodal_vlp}
+\noindent\textbf{Input:} Image $I$, Task Prompt $T$
+\begin{algorithmic}[1]
+
+\State \textbf{// Step 1: Encode Image using DaViT}
+\State $ImageTokens \gets \text{VisionTransformer}(I)$
+
+\State \textbf{// Step 2: Encode Text using BERT}
+\State $TextTokens \gets \text{BERT}(T)$
+
+\State \textbf{// Step 3: Concatenate Image and Text Tokens}
+\State $InputTokens \gets \text{Concatenate}(ImageTokens,\ TextTokens)$
+
+\State \textbf{// Step 4: Pass through Multi-Modal Encoder-Decoder}
+\For{$layer = 1$ to $L$}
+    \State \textbf{// Multi-Head Self-Attention on Input Tokens}
+    \State $Q, K, V \gets \text{LinearProjections}(InputTokens)$
+    \State $Attention \gets \text{Softmax}\left( \frac{Q \cdot K^T}{\sqrt{d_k}} \right) \cdot V$
+    
+    \State \textbf{// Feed-Forward Network}
+    \State $FFN\_Output \gets \text{GELU}(Attention \cdot W_1 + b_1) \cdot W_2 + b_2$
+    \State $InputTokens \gets \text{LayerNorm}(InputTokens + FFN\_Output)$
+\EndFor
+
+\State \textbf{// Step 5: Generate Textual Output}
+\State $Response \gets \text{Decode}(InputTokens)$
+
+\end{algorithmic}
+\noindent\textbf{Output:} Textual Response $Response$
+\end{algorithm}

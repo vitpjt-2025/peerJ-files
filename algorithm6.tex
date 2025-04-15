@@ -1,0 +1,28 @@
+\begin{algorithm}
+\caption{L1 Unstructured Pruning of Quantized Model}
+\label{alg:l1_pruning}
+\noindent\textbf{Input:} Quantized checkpoint path $C_q$, model $M_q$
+\begin{algorithmic}[1]
+\State \textbf{// Load the quantized model $M_q$ from checkpoint path $C_q$}
+\State $model \gets \text{torch.load}(C_q,\ \text{map\_location} = \text{"cpu"})$
+\State \textbf{// For each module in model:}
+\For{$name, module \in model.\text{items()}$}
+    \State \textbf{// If the module is of type Linear:}
+    \If{$\text{isinstance}(module,\ \text{torch.nn.Linear})$}
+        \State \textbf{// Prune the weights of the module:}
+        \State $\text{prune.l1\_unstructured}( $
+        
+        \hspace{2em}$\text{module},$ \textbf{// Target module}
+        
+        \hspace{2em}$\text{name} = \text{"weight"},$ \textbf{// Target weights}
+        
+        \hspace{2em}$\text{amount} = 0.5$ \textbf{// Prune 50\% of weights}
+        
+        $)$
+    \EndIf
+\EndFor
+\State \textbf{// Save the pruned model $M_p$}
+\State $\text{torch.save}(model,\ \text{"florence2\_lora\_quantized\_pruned.pt"})$
+\end{algorithmic}
+\noindent\textbf{Output:} Pruned model $M_p$
+\end{algorithm}

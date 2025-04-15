@@ -1,0 +1,21 @@
+\begin{algorithm}
+\caption{Dynamic Quantization of Florence-2 LoRA}
+\label{alg:dynamic_quant}
+\noindent\textbf{Input:} Checkpoint path $C$, model $M$
+\begin{algorithmic}[1]
+\State \textbf{// Load model $M$ from checkpoint path $C$}
+\State $model \gets \text{torch.load}(C,\ \text{map\_location} = \text{"cpu"})$
+\State \textbf{// Apply dynamic quantization to linear layers}
+\State $quantized\_model \gets \text{quantize\_dynamic}( $
+\hspace{2em}$model,$
+
+\hspace{2em}$\{\text{torch.nn.Linear}\},$ \textbf{// Target linear layers}
+
+\hspace{2em}$\text{dtype} = \text{torch.qint8}$ \textbf{// Use INT8 for compression}
+
+$)$
+\State \textbf{// Save the quantized model $M_q$}
+\State $\text{torch.save}(quantized\_model.\text{state\_dict}(),\ \text{"florence2\_lora\_quantized.pt"})$
+\end{algorithmic}
+\noindent\textbf{Output:} Quantized model $M_q$
+\end{algorithm}

@@ -1,0 +1,40 @@
+\begin{algorithm}
+\caption{Vision Transformer (ViT) Inference}
+\label{alg:vit_inference}
+\noindent\textbf{Input:} Image $I$ of size $(H, W, C)$, patch size $P$, number of transformer layers $L$
+\begin{algorithmic}[1]
+
+\State \textbf{// Divide image into patches}
+\State $N \gets \frac{H \times W}{P \times P}$
+
+\For{$i = 1$ to $N$}
+    \State $Patch_i \gets \text{ExtractPatch}(I,\ i)$
+    \State $Token_i \gets \text{Flatten}(Patch_i)$
+\EndFor
+
+\State \textbf{// Linear projection of patches}
+\For{$i = 1$ to $N$}
+    \State $Token_i \gets \text{LinearProjection}(Token_i)$
+\EndFor
+
+\State \textbf{// Add positional embeddings}
+\State $Tokens \gets \text{AddPositionalEmbedding}(Token_1, \dots, Token_N)$
+
+\State \textbf{// Pass through Transformer layers}
+\For{$layer = 1$ to $L$}
+    \State \textbf{// Multi-Head Self-Attention}
+    \State $(Q, K, V) \gets \text{ProjectToQKV}(Tokens)$
+    \State $Attention \gets \text{Softmax}\left( \frac{Q \cdot K^T}{\sqrt{d_k}} \right) \cdot V$
+    \State $Tokens \gets \text{LayerNorm}(Tokens + Attention)$
+
+    \State \textbf{// Feed-Forward Network}
+    \State $FFN\_Output \gets \text{GELU}(Tokens \cdot W_1 + b_1) \cdot W_2 + b_2$
+    \State $Tokens \gets \text{LayerNorm}(Tokens + FFN\_Output)$
+\EndFor
+
+\State \textbf{// Generate final prediction}
+\State $Prediction \gets \text{OutputLayer}(Tokens)$
+
+\end{algorithmic}
+\noindent\textbf{Output:} Prediction $Prediction$
+\end{algorithm}

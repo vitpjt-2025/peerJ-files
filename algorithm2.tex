@@ -1,0 +1,40 @@
+\begin{algorithm}
+\caption{Training Procedure for Generative Adversarial Network (GAN)}
+\label{alg:gan_training}
+\noindent\textbf{Input:} Generator $G$, Discriminator $D$, learning rate $\alpha$, batch size $B$, number of epochs $E$
+\begin{algorithmic}[1]
+
+\State \textbf{// Initialize model weights}
+\State Randomly initialize weights of $G$ and $D$
+
+\For{epoch $e = 1$ to $E$}
+    \For{each batch $b$ in training data}
+
+        \State \textbf{// Train Discriminator}
+        \State Sample real data $x$ from dataset
+        \State Sample noise vector $z \sim \mathcal{N}(0,\ 1)$
+        \State $x_{\text{fake}} \gets G(z)$
+        \State $D_{\text{real}} \gets D(x)$ \\textbf{Real data score}
+        \State $D_{\text{fake}} \gets D(x_{\text{fake}})$ \\textbf{Fake data score}
+        \State $L_D \gets - \left( \log D_{\text{real}} + \log(1 - D_{\text{fake}}) \right)$
+        \State Update $D$ to minimize $L_D$
+
+        \State \textbf{// Train Generator}
+        \State Sample noise vector $z \sim \mathcal{N}(0,\ 1)$
+        \State $x_{\text{fake}} \gets G(z)$
+        \State $D_{\text{fake}} \gets D(x_{\text{fake}})$
+        \State $L_G \gets - \log D_{\text{fake}}$
+        \State Update $G$ to minimize $L_G$
+
+        \State \textbf{// Log progress every 10 epochs}
+        \If{$e \bmod 10 = 0$}
+            \State Save model checkpoint
+            \State Evaluate generated samples
+        \EndIf
+
+    \EndFor
+\EndFor
+
+\end{algorithmic}
+\noindent\textbf{Output:} Trained Generator $G$ and Discriminator $D$
+\end{algorithm}

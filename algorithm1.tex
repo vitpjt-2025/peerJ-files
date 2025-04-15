@@ -1,0 +1,53 @@
+\begin{algorithm}
+\caption{Generator Network, Discriminator Network, and Training Process}
+\label{alg:gan}
+\noindent\textbf{Generator Network}
+\begin{algorithmic}[1]
+
+\State \textbf{Input:} Latent vector $z \in \mathbb{R}^{\text{latent\_dim}}$
+\State Dense(1024) $\rightarrow$ ReLU
+\State Dense($128 \times 8 \times 8$) $\rightarrow$ ReLU
+\State Reshape to $(128,\ 8,\ 8)$
+
+\For{$i = 1$ to $3$}
+    \State ConvTranspose2D(filters $/ 2^i$, $4 \times 4$, stride=2, padding=1)
+    \State \hspace{2em}$\rightarrow$ BatchNorm $\rightarrow$ ReLU
+\EndFor
+
+\State ConvTranspose2D(3,\ $4 \times 4$, stride=2, padding=1) $\rightarrow$ Tanh
+\State \textbf{Output:} Generated image $\in \mathbb{R}^{3 \times 64 \times 64}$
+
+\end{algorithmic}
+
+\vspace{1em}
+\noindent\textbf{Discriminator Network}
+\begin{algorithmic}[1]
+
+\State \textbf{Input:} Image $\in \mathbb{R}^{3 \times 64 \times 64}$
+
+\For{$i = 1$ to $3$}
+    \State Conv2D(filters $\times 2^i$, $4 \times 4$, stride=2, padding=1)
+    \State \hspace{2em}$\rightarrow$ BatchNorm $\rightarrow$ LeakyReLU(0.2)
+\EndFor
+
+\State Dense(1) $\rightarrow$ Sigmoid
+\State \textbf{Output:} Probability $\in [0,\ 1]$
+
+\end{algorithmic}
+
+\vspace{1em}
+\noindent\textbf{Training Process}
+\begin{algorithmic}[1]
+
+\State Initialize Adam optimizers with $lr = 0.0002$, $\beta_1 = 0.5$, $\beta_2 = 0.999$
+
+\For{each epoch}
+    \For{each batch in training data}
+        \State Train Discriminator on real and fake samples
+        \State Train Generator to fool the Discriminator
+        \State Log training progress and save checkpoints
+    \EndFor
+\EndFor
+
+\end{algorithmic}
+\end{algorithm}
